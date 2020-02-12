@@ -1,0 +1,39 @@
+{
+  "db": "test_db",
+  "db_parameters": {
+    "connection_type": "direct",
+    "host_name": "localhost",
+    "service_name": "XE",
+    "port": "1521"
+  },
+  "schemas": {
+    "test": {
+      "tables": [
+        {
+          "table_name": "table_test_t1",
+          "partition_key_longetivitity": "day",
+          "ora_date_format": "DDMMYYYY",
+          "partition_name_prefix": "test_t1_",
+          "partition_name_suffix": "_name",
+          "partition_key_type": "date"
+        },
+        {
+          "table_name": "table_test_num",
+          "partition_key_longetivitity": "day",
+          "ora_date_format": "YYYYMMDD",
+          "partition_name_prefix": "pre_",
+          "partition_name_suffix": "_post",
+          "partition_key_type": "date_as_number"
+        },
+        {
+          "table_name": "table_test_num_month",
+          "partition_key_longetivitity": "month",
+          "ora_date_format": "YYYYMM",
+          "partition_name_prefix": "pre_",
+          "partition_name_suffix": "_post",
+          "partition_key_type": "date_as_number"
+        }
+      ]
+    }
+  }
+}
