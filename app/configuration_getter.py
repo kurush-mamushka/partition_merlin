@@ -21,4 +21,3 @@ class GetConfig:
             for table in all_tables:
                 table["schema"] = schema
                 self.flat_tables_info.append(table)
-

@@ -18,5 +18,6 @@ Implemented:
 * Add safety checks for config file
 * Exception handling and reporting
 * Email notifications
-
+* Add weekly type of partitions
+* Add partition rotation schemas (like weekly, daily rotation...)
 

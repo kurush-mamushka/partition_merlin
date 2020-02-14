@@ -6,7 +6,7 @@ from oracle_executioner import OracleClient
 from datetime import datetime, timedelta
 ###################################################
 logger.info("Test")
-config = GetConfig('config_one.json')
+config = GetConfig('test_config_one.json')
 oracle_date_format_python = '%d%m%Y'
 
 # print (config.config)
@@ -30,6 +30,7 @@ for current_table in config.flat_tables_info:
         new_partition_name_dt = datetime.strptime(current_partition_date_str, oracle_date_format_python)
     elif current_table['partition_key_type'] == 'date_as_number':
         new_partition_name_dt = datetime.strptime(current_partition_date_str, PartGenerator.ora2pythonDT(current_table['ora_date_format']))
+
     csql = PartGenerator(PartGenerator.key_date,  13,
                          latest_partition_date=new_partition_name_dt,
                          table_owner=current_table['schema'],
@@ -39,6 +40,7 @@ for current_table in config.flat_tables_info:
                          partition_name_prefix=current_table['partition_name_prefix'],
                          partition_name_suffix=current_table['partition_name_suffix'],
                          partition_key_type=current_table['partition_key_type'],
+                         periods=current_table['periods'],
                          indexes_list=all_indexes)
 
     for single_sql in csql.generateSQLs():
@@ -46,3 +48,4 @@ for current_table in config.flat_tables_info:
     logger.success("Done")
 # close oracle connection
 del oe
+
