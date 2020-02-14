@@ -96,7 +96,7 @@ class PartGenerator:
         if current_difference < 0:
             self.periods = abs(current_difference) + self.periods
         else:
-            self.periods = self.periods - current_difference
+            self.periods = self.periods + current_difference
         logger.info("Periods to add are: {}".format(self.periods))
 
 
