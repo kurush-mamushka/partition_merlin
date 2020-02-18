@@ -12,7 +12,7 @@ Implemented:
 
 * Add username/password via command line
 * Pass config file via command line
-* Add parameter to config file for number of periods to be added (like 30 (days/months/etc))
+* ~~Add parameter to config file for number of periods to be added (like 30 (days/months/etc))~~
 
 **Would**
 * Add safety checks for config file

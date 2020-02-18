@@ -39,14 +39,12 @@ class PartGenerator:
         return (dtEnd.year - dtStart.year) * 12 + dtEnd.month - dtStart.month
 
     def addNextPeriod(self, dt, longetivity):
-
         if longetivity == 'day':
             res = dt + timedelta(days=1)
         if longetivity == 'week':
             res = dt + timedelta(weeks=1)
         if longetivity == 'month':
             res = self.get1stDayNextMonth(dt)
-        logger.debug("Date was: {}, now: {}".format(dt, res))
         return res
 
     def generateSQLs(self):
