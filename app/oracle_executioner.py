@@ -26,10 +26,13 @@ class OracleClient:
     def __init__(self, connection_info, **kwargs):
         # 2DO: add check for connection type and change connection style depending on this
         if connection_info["connection_type"] == 'direct':
-            self.dsn = cx_Oracle.makedsn(connection_info['host_name'], connection_info['port'],
-                                         connection_info['service_name'])
-            self.oracleConnection = cx_Oracle.connect(kwargs['username'], kwargs['password'], self.dsn,
-                                                      encoding='UTF-8')
+            # check if there SID or SERVICE NAME and create DSN accordingly
+            if 'service_name' in connection_info:
+                self.dsn = cx_Oracle.makedsn(host_nameconnection_info['host_name'], port=connection_info['port'],
+                                             service_name=connection_info['service_name'])
+            elif 'sid' in connection_info:
+                self.dsn = cx_Oracle.makedsn(host_nameconnection_info['host_name'], port=connection_info['port'],
+                                             sid=connection_info['service_name'])
         elif connection_info["connection_type"] == 'tnsnames':
             self.oracleConnection = cx_Oracle.connect(kwargs['username'], kwargs['password'],
                                                       connection_info['connection_name'], encoding='UTF-8')

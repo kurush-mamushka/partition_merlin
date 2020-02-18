@@ -38,7 +38,6 @@ class PartGenerator:
     def getDifferenceMonth(self, dtStart, dtEnd):
         return (dtEnd.year - dtStart.year) * 12 + dtEnd.month - dtStart.month
 
-
     def addNextPeriod(self, dt, longetivity):
 
         if longetivity == 'day':
@@ -113,7 +112,6 @@ class PartGenerator:
             # we should feel 2 variables:
             # partition name in format that we have in setup
             # and real date for partition bound values
-
 
             new_partition_name_dt = self.addNextPeriod(new_partition_name_dt, partition_longetivity)
             new_partition_name_str = datetime.strftime(new_partition_name_dt, py_dt_format)
