@@ -77,28 +77,34 @@ class PartGenerator:
         if 'partition_key_type' in self.kwargs:
             partition_key_type = self.kwargs['partition_key_type']
 
-        logger.info("Working on table {}.{} for {} periods with period type [{}].".format(table_owner, table_name, self.periods,
-                                                                          partition_longetivity))
+        logger.info(
+            "Working on table {}.{} for {} periods with period type [{}].".format(table_owner, table_name, self.periods,
+                                                                                  partition_longetivity))
         dtNow = datetime.now()
         logger.debug("Today date is {}".format(dtNow))
+        logger.debug("New partition name dt: {}".format(new_partition_name_dt))
 
         if 'periods' in self.kwargs:
             self.periods = self.kwargs['periods']
         # 2DO add
         if partition_longetivity == 'day':
-            current_difference = (new_partition_name_dt - dtNow).days
-        elif partition_longetivity =='month':
-            current_difference = self.getDifferenceMonth(new_partition_name_dt, dtNow)
+            current_difference = (dtNow - new_partition_name_dt).days
+        elif partition_longetivity == 'month':
+            current_difference = self.getDifferenceMonth(dtNow, new_partition_name_dt)
         else:
-            logger.critical ("Unknown partition longetivity. Please fix it or add to feature")
-        logger.info ("Current date is {} and number for pre-existing periods are {}".format(new_partition_name_dt, current_difference))
+            logger.critical("Unknown partition longetivity. Please fix it or add to feature")
+
+        logger.info("Current date is {} and number for pre-existing periods are {}".format(new_partition_name_dt,
+                                                                                           current_difference))
 
         if current_difference < 0:
             self.periods = abs(current_difference) + self.periods
         else:
-            self.periods = self.periods + current_difference
-        logger.info("Periods to add are: {}".format(self.periods))
-
+            self.periods = self.periods - current_difference
+        if self.periods <= 0:
+            logger.info("Looks ike we are good with current table {}.{}".format(table_owner, table_name))
+        else:
+            logger.info("Periods to add are: {}".format(self.periods))
 
         # replace this with function returning partition name and partition date (+1)
         for n in range(0, self.periods):
