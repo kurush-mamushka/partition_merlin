@@ -28,14 +28,18 @@ class OracleClient:
         if connection_info["connection_type"] == 'direct':
             # check if there SID or SERVICE NAME and create DSN accordingly
             if 'service_name' in connection_info:
-                self.dsn = cx_Oracle.makedsn(host_nameconnection_info['host_name'], port=connection_info['port'],
+                self.dsn = cx_Oracle.makedsn(host=connection_info['host_name'], port=connection_info['port'],
                                              service_name=connection_info['service_name'])
             elif 'sid' in connection_info:
-                self.dsn = cx_Oracle.makedsn(host_nameconnection_info['host_name'], port=connection_info['port'],
+                self.dsn = cx_Oracle.makedsn(host=connection_info['host_name'], port=connection_info['port'],
                                              sid=connection_info['service_name'])
+            logger.debug("Current DSN: {}".format(self.dsn))
+            self.oracleConnection = cx_Oracle.connect(kwargs['username'], kwargs['password'], self.dsn,
+                                                      encoding='UTF-8')
         elif connection_info["connection_type"] == 'tnsnames':
             self.oracleConnection = cx_Oracle.connect(kwargs['username'], kwargs['password'],
                                                       connection_info['connection_name'], encoding='UTF-8')
+        logger.debug("Connected to oracle")
         self.cursor = self.oracleConnection.cursor()
         logger.info("Oracle connection created")
 
@@ -72,7 +76,7 @@ class OracleClient:
 
         res_key = self.run_sql_block_for_key_value(
             sqls4merlin.sqls[sql_code].format(table_owner.upper(), table_name.upper(),
-                                                                   res_id[0][4]))
+                                              res_id[0][4]))
 
         logger.debug("Latest partition key value is: {}".format(res_key))
         results = []
