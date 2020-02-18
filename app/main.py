@@ -31,7 +31,7 @@ for current_table in config.flat_tables_info:
     elif current_table['partition_key_type'] == 'date_as_number':
         new_partition_name_dt = datetime.strptime(current_partition_date_str, PartGenerator.ora2pythonDT(current_table['ora_date_format']))
 
-    csql = PartGenerator(PartGenerator.key_date,  13,
+    csql = PartGenerator(PartGenerator.key_date, current_table['periods'],
                          latest_partition_date=new_partition_name_dt,
                          table_owner=current_table['schema'],
                          table_name=current_table['table_name'],
