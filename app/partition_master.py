@@ -46,11 +46,12 @@ class PartGenerator:
             res = dt + timedelta(weeks=1)
         if longetivity == 'month':
             res = self.get1stDayNextMonth(dt)
+        logger.debug("Date was: {}, now: {}".format(dt, res))
         return res
 
     def generateSQLs(self):
         if 'latest_partition_date' in self.kwargs:
-            new_partition_name_dt = self.kwargs['latest_partition_date']
+            latest_partition_key = self.kwargs['latest_partition_date']
         if 'partition_name_suffix' in self.kwargs:
             suffix = self.kwargs['partition_name_suffix']
         else:
@@ -80,20 +81,20 @@ class PartGenerator:
             "Working on table {}.{} for {} periods with period type [{}].".format(table_owner, table_name, self.periods,
                                                                                   partition_longetivity))
         dtNow = datetime.now()
+        logger.debug("Latest partition key: {}".format(latest_partition_key))
         logger.debug("Today date is {}".format(dtNow))
-        logger.debug("New partition name dt: {}".format(new_partition_name_dt))
 
         if 'periods' in self.kwargs:
             self.periods = self.kwargs['periods']
         # 2DO add
         if partition_longetivity == 'day':
-            current_difference = (dtNow - new_partition_name_dt).days
+            current_difference = (dtNow - latest_partition_key).days
         elif partition_longetivity == 'month':
-            current_difference = self.getDifferenceMonth(dtNow, new_partition_name_dt)
+            current_difference = self.getDifferenceMonth(dtNow, latest_partition_key)
         else:
             logger.critical("Unknown partition longetivity. Please fix it or add to feature")
 
-        logger.info("Current date is {} and number for pre-existing periods are {}".format(new_partition_name_dt,
+        logger.info("Current date is {} and number for pre-existing periods are {}".format(latest_partition_key,
                                                                                            current_difference))
 
         if current_difference < 0:
@@ -106,17 +107,23 @@ class PartGenerator:
             logger.info("Periods to add are: {}".format(self.periods))
 
         # replace this with function returning partition name and partition date (+1)
+        new_partition_name_dt = latest_partition_key
+        new_partition_name_str = datetime.strftime(new_partition_name_dt, py_dt_format)
+        new_partition_date_dt = latest_partition_key
+
         for n in range(0, self.periods):
             # logger.debug("Latest date: {} to be formated to {}".format(new_partition_name_dt, py_dt_format))
             # logger.debug("Python date: {}".format(new_partition_name_dt))
             # we should feel 2 variables:
             # partition name in format that we have in setup
             # and real date for partition bound values
+            if n > 0:
+                # if this is not 1st iteration - add one period to partition name
+                new_partition_name_dt = self.addNextPeriod(new_partition_name_dt, partition_longetivity)
+                new_partition_name_str = datetime.strftime(new_partition_name_dt, py_dt_format)
 
-            new_partition_name_dt = self.addNextPeriod(new_partition_name_dt, partition_longetivity)
-            new_partition_name_str = datetime.strftime(new_partition_name_dt, py_dt_format)
-            new_partition_date_dt = self.addNextPeriod(new_partition_name_dt, partition_longetivity)
-            new_partition_date_str = datetime.strftime(new_partition_date_dt, self.oracle_date_format_python)
+            new_partition_date_dt = self.addNextPeriod(new_partition_date_dt, partition_longetivity)
+            new_partition_date_str = datetime.strftime(new_partition_date_dt, py_dt_format)
 
             new_partition_name = prefix + new_partition_name_str + suffix
 
@@ -125,9 +132,9 @@ class PartGenerator:
             values_sql = ' values less than ('
 
             if partition_key_type == 'date':
-                values_sql += "to_date('{}', '{}'))".format(new_partition_date_str, 'DDMMYYYY')
+                values_sql += "to_date('{}', '{}'))".format(new_partition_date_str, 'MMDDYYYY')
             elif partition_key_type == 'date_as_number':
-                values_sql += new_partition_name_str + ')'
+                values_sql += new_partition_date_str + ')'
 
             # now let's do indexes
             index_sql = ''
