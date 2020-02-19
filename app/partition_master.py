@@ -62,6 +62,12 @@ class PartGenerator:
         if 'partition_key_longetivitity' in self.kwargs:
             partition_longetivity = self.kwargs['partition_key_longetivitity']
 
+        # check partitioning type, by default (not defined) is range, we can have LIST now
+        if 'partitioning_type' in self.kwargs:
+            partitioning_type = self.kwargs['partitioning_type']
+        else:
+            partitioning_type = 'range'
+
         if 'ora_date_format' in self.kwargs:
             ora_date_format = self.kwargs['ora_date_format']
             py_dt_format = self.ora2pythonDT(ora_date_format)
@@ -127,7 +133,13 @@ class PartGenerator:
 
             pre_sql = 'alter table {}.{} add partition  '.format(table_owner, table_name)
             # here we should add analysis of key type, if this date OR number as date
-            values_sql = ' values less than ('
+            if partitioning_type == 'range':
+                values_sql = ' values less than ('
+            elif partitioning_type == 'list':
+                values_sql = ' values ('
+            else:
+                logger.critical(
+                    "Not implemented type of partitioning {}. Please implement it.".format(partitioning_type))
 
             if partition_key_type == 'date':
                 values_sql += "to_date('{}', '{}'))".format(new_partition_date_str, 'MMDDYYYY')
