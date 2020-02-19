@@ -19,5 +19,5 @@ class GetConfig:
         for schema in all_schemas:
             all_tables = all_schemas[schema]["tables"]
             for table in all_tables:
-                table["schema"] = schema
+                table["table_owner"] = schema
                 self.flat_tables_info.append(table)

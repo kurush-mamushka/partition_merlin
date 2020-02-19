@@ -13,11 +13,11 @@ class PartGenerator:
 
     # here is partition increment keys values
 
-    def __init__(self, key_type, cnt, **kwargs):
+    def __init__(self, **kwargs):
         # initial value is start point for generating partitions
-        self.key_type = key_type
         self.periods = 12
         self.kwargs = kwargs
+        print(self.kwargs)
 
     # this method is static so we will be able to call it w/out creating class (as far as this needed now
     @staticmethod
@@ -48,39 +48,19 @@ class PartGenerator:
         return res
 
     def generateSQLs(self):
-        if 'latest_partition_date' in self.kwargs:
-            latest_partition_key = self.kwargs['latest_partition_date']
-        if 'partition_name_suffix' in self.kwargs:
-            suffix = self.kwargs['partition_name_suffix']
-        else:
-            suffix = ''
-        if 'partition_name_prefix' in self.kwargs:
-            prefix = self.kwargs['partition_name_prefix']
-        else:
-            prefix = ''
-        #
-        if 'partition_key_longetivitity' in self.kwargs:
-            partition_longetivity = self.kwargs['partition_key_longetivitity']
-
+        latest_partition_key = self.kwargs.get('latest_partition_date')
+        suffix = self.kwargs.get('partition_name_suffix')
+        prefix = self.kwargs.get('partition_name_prefix')
+        partition_longetivity = self.kwargs.get('partition_key_longetivitity')
         # check partitioning type, by default (not defined) is range, we can have LIST now
-        if 'partitioning_type' in self.kwargs:
-            partitioning_type = self.kwargs['partitioning_type']
-        else:
-            partitioning_type = 'range'
-
-        if 'ora_date_format' in self.kwargs:
-            ora_date_format = self.kwargs['ora_date_format']
-            py_dt_format = self.ora2pythonDT(ora_date_format)
-            logger.debug(ora_date_format)
-            logger.debug(py_dt_format)
-
-        if 'table_owner' in self.kwargs:
-            table_owner = self.kwargs['table_owner']
-        if 'table_name' in self.kwargs:
-            table_name = self.kwargs['table_name']
-        if 'partition_key_type' in self.kwargs:
-            partition_key_type = self.kwargs['partition_key_type']
-
+        partitioning_type = self.kwargs.get('partitioning_type', 'range')
+        ora_date_format = self.kwargs.get('ora_date_format')
+        py_dt_format = self.ora2pythonDT(ora_date_format)
+        logger.debug("Oracle date format: {}".format(ora_date_format))
+        logger.debug("Python date format: {}".format(py_dt_format))
+        table_owner = self.kwargs.get('table_owner')
+        table_name = self.kwargs.get('table_name')
+        partition_key_type = self.kwargs.get('partition_key_type', 'date')
         logger.info(
             "Working on table {}.{} for {} periods with period type [{}].".format(table_owner, table_name, self.periods,
                                                                                   partition_longetivity))
@@ -118,7 +98,7 @@ class PartGenerator:
         for n in range(0, self.periods):
             # logger.debug("Latest date: {} to be formated to {}".format(new_partition_name_dt, py_dt_format))
             # logger.debug("Python date: {}".format(new_partition_name_dt))
-            # we should feel 2 variables:
+            # we should have 2 variables:
             # partition name in format that we have in setup
             # and real date for partition bound values
             if n > 0:
