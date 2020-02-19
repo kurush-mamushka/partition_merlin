@@ -15,7 +15,7 @@ oracle_date_format_python = '%d%m%Y'
 
 # 2DO CHANGE TO PARAMETRIZED USWERNAME / PASSWORD
 oe = OracleClient(config.db_info, username='test', password='test')
-
+all_sqls = []
 for current_table in config.flat_tables_info:
     ###
     # for testing only
@@ -46,7 +46,13 @@ for current_table in config.flat_tables_info:
 
     for single_sql in csql.generateSQLs():
         logger.info(single_sql)
+        all_sqls.append(single_sql)
     logger.success("Done")
+
+# debug print while still implementing
+for single_sql in all_sqls:
+    for line in single_sql.split('\n'):
+        print('{};'.format(line))
+
 # close oracle connection
 del oe
-
