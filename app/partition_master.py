@@ -22,6 +22,7 @@ class PartGenerator:
     # this method is static so we will be able to call it w/out creating class (as far as this needed now
     @staticmethod
     def ora2pythonDT(ora_fmt):
+        # translate oracle date format into Python date format, only YYYY, YY, MM and DD are supported
         logger.debug("ora2pythonDT: {} ".format(ora_fmt))
         # change date format from Oracle to Python one so we can increment it later
         p_fmt = ''
@@ -39,6 +40,8 @@ class PartGenerator:
         return (dtEnd.year - dtStart.year) * 12 + dtEnd.month - dtStart.month
 
     def addNextPeriod(self, dt, longetivity):
+        # add period to current date,
+        # supported: day, week, month
         if longetivity == 'day':
             res = dt + timedelta(days=1)
         if longetivity == 'week':
@@ -67,9 +70,9 @@ class PartGenerator:
         dtNow = datetime.now()
         logger.debug("Latest partition key: {}".format(latest_partition_key))
         logger.debug("Today date is {}".format(dtNow))
+        # get periods if exists or set it as default value in this class
+        self.periods = self.kwargs.get('periods', self.periods)
 
-        if 'periods' in self.kwargs:
-            self.periods = self.kwargs['periods']
         # 2DO add
         if partition_longetivity == 'day':
             current_difference = (dtNow - latest_partition_key).days
@@ -96,8 +99,6 @@ class PartGenerator:
         new_partition_date_dt = latest_partition_key
 
         for n in range(0, self.periods):
-            # logger.debug("Latest date: {} to be formated to {}".format(new_partition_name_dt, py_dt_format))
-            # logger.debug("Python date: {}".format(new_partition_name_dt))
             # we should have 2 variables:
             # partition name in format that we have in setup
             # and real date for partition bound values
@@ -120,7 +121,7 @@ class PartGenerator:
             else:
                 logger.critical(
                     "Not implemented type of partitioning {}. Please implement it.".format(partitioning_type))
-
+            values_sql = ''
             if partition_key_type == 'date':
                 values_sql += "to_date('{}', '{}'))".format(new_partition_date_str, 'MMDDYYYY')
             elif partition_key_type == 'date_as_number':
