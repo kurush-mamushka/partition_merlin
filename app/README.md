@@ -1,4 +1,4 @@
-# Partition Merlin for partition maintenance (DB independent)
+# Partition Merlin for Oracle Partition Maintenance (DB independent) (stupidly simple)
 
 Implemented:
 
@@ -8,9 +8,11 @@ Implemented:
     * Add parameter to config file for number of periods to be added (like 30 (days/months/etc))
     * List partitioning
 
-**2DO (or in progress)**
+**2DO (or is in progress)**
 * Add username/password via command line
 * Pass config file via command line
+* Split DB connection config and Tables config into 2 different files, so tables config can be used for different environments
+* Add parameter to ignore errors (non exisiting tables), for example table exists in DEV but not exists in PROD
 
 **Must**
 

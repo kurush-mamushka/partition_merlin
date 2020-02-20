@@ -3,18 +3,35 @@ from partition_master import PartGenerator
 from configuration_getter import GetConfig
 from loguru import logger
 from oracle_executioner import OracleClient
-from datetime import datetime, timedelta
+from datetime import datetime
+import argparse
+
 ###################################################
 logger.info("Test")
 config = GetConfig('test_config_test_db.json')
 oracle_date_format_python = '%d%m%Y'
+new_partition_name_dt = None
+args = None
 
-# print (config.config)
 
+########################################################################################################################
+def parseArgs():
+    parser = argparse.ArgumentParser(description='This is Partition Merlin',
+                                     epilog='--\nHave a great day from partition Merlin')
+    parser.add_argument('--db_connection_config', help='json config file for database connection', required=True)
+    parser.add_argument('--db_tables_config', help='Tables configuration file for partition maintenance', required=True)
+    parser.add_argument('--run_sql', help='If you want to execute SQLs in database', action='store_true')
+    parser.add_argument('--username', help='Username for DB connection', required=True)
+    parser.add_argument('--password', help='Password for DB connection', required=True)
+    args = parser.parse_args()
+    return args
+
+
+########################################################################################################################
 # get last partition info, via oracle connection
+args = parseArgs()
 
-# 2DO CHANGE TO PARAMETRIZED USWERNAME / PASSWORD
-oe = OracleClient(config.db_info, username='test', password='test')
+oe = OracleClient(config.db_info, username=args.username, password=args.password)
 all_sqls = []
 for current_table in config.flat_tables_info:
     ###
