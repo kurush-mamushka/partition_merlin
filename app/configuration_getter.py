@@ -5,19 +5,26 @@ from loguru import logger
 class GetConfig:
     config = {}
     db_info = {}
+    schemas = {}
     flat_tables_info = []
 
-    def __init__(self, file_name):
-        logger.info("Config file: {}".format(file_name))
-        with open(file_name, 'r') as current_config:
-            config_file = current_config.read()
-            self.config = json.loads(config_file)
+    def __init__(self, db_connection_config, db_tables_config):
+        logger.info("Config file for DB connection : {}".format(db_connection_config))
+        with open(db_connection_config, 'r') as current_config_connection:
+            config_file_connection = current_config_connection.read()
+            self.db_info = json.loads(config_file_connection)
 
-        all_schemas = self.config['schemas']
-        self.db_info = self.config['db_parameters']
-        logger.debug("Total number of schemas in this setup {}".format(len(all_schemas)))
-        for schema in all_schemas:
-            all_tables = all_schemas[schema]["tables"]
+        logger.info("Config file for DB tables : {}".format(db_connection_config))
+
+        with open(db_tables_config, 'r') as current_config_tables:
+            config_file_tables = current_config_tables.read()
+            self.schemas = json.loads(config_file_tables)
+
+        logger.critical('here')
+        logger.debug("Total number of schemas in this setup {}".format(len(self.schemas)))
+        for schema in self.schemas:
+            logger.debug("Loading schema {}".format(schema))
+            all_tables = self.schemas[schema]
             for table in all_tables:
                 table["table_owner"] = schema
                 self.flat_tables_info.append(table)

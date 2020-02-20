@@ -25,6 +25,7 @@ class OracleClient:
     # connection type can be direct or tnsnames
     def __init__(self, connection_info, **kwargs):
         # 2DO: add check for connection type and change connection style depending on this
+        logger.debug(connection_info)
         if connection_info["connection_type"] == 'direct':
             # check if there SID or SERVICE NAME and create DSN accordingly
             if 'service_name' in connection_info:

@@ -7,17 +7,21 @@ Implemented:
     * date, represented by number (YYYYMM for example for Monthly Partitions, number will be 202001)
     * Add parameter to config file for number of periods to be added (like 30 (days/months/etc))
     * List partitioning
+    * Add username/password via command line
+    * Pass config file via command line
+    * Split DB connection config and Tables config into 2 different files, so tables config can be used for different environments
+
 
 **2DO (or is in progress)**
-* Add username/password via command line
-* Pass config file via command line
-* Split DB connection config and Tables config into 2 different files, so tables config can be used for different environments
+* ~~Add username/password via command line~~
+* ~~Pass config file via command line~~
+* ~~Split DB connection config and Tables config into 2 different files, so tables config can be used for different environments~~
 * Add parameter to ignore errors (non existing tables), for example table exists in DEV but not exists in PROD
 
 **Must**
 
 * ~~Add username/password via command line~~
-* Pass config file via command line / split config files into 2
+* ~~Pass config file via command line / split config files into 2~~
 * ~~Add parameter to config file for number of periods to be added (like 30 (days/months/etc))~~
 
 **Would**
