@@ -61,11 +61,14 @@ for current_table in config.flat_tables_info:
         logger.info(single_sql)
         all_sqls.append(single_sql)
     logger.success("Done")
+    logger.success("*" * 80)
     all_sqls.append("/* ************************************************************ */")
 # debug print while still implementing
 for single_sql in all_sqls:
     for line in single_sql.split('\n'):
         print('{};'.format(line))
+        if args.run_sql:
+            logger.debug("Running sql: {}".format(single_sql))
 
 # close oracle connection
 del oe

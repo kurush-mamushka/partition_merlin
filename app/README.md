@@ -2,11 +2,11 @@
 
 Implemented:
 
-* Add partition by range, partition key should be:
-    * date
-    * date, represented by number (YYYYMM for example for Monthly Partitions, number will be 202001)
+* Add partition by range/list (simple one value, no complexity yet), partition key should be:
+    * Date
+    * Date, represented by number (YYYYMM for example for Monthly Partitions, number will be 202001)
     * Add parameter to config file for number of periods to be added (like 30 (days/months/etc))
-    * List partitioning
+    * List partitioning (simple)
     * Add username/password via command line
     * Pass config file via command line
     * Split DB connection config and Tables config into 2 different files, so tables config can be used for different environments
@@ -29,5 +29,5 @@ Implemented:
 * Exception handling and reporting
 * Email notifications
 * Add weekly type of partitions
-* Add partition rotation schemas (like weekly, daily rotation...)
+* Add partition tablespace rotation schemas (like weekly, daily rotation...)
 

@@ -65,8 +65,11 @@ class PartGenerator:
         table_name = self.kwargs.get('table_name')
         partition_key_type = self.kwargs.get('partition_key_type', 'date')
         logger.info(
-            "Working on table {}.{} for {} periods with period type [{}].".format(table_owner, table_name, self.periods,
-                                                                                  partition_longetivity))
+            "Working on table {}.{} for {} periods with period type [{}] and partition type {}.".format(table_owner,
+                                                                                                        table_name,
+                                                                                                        self.periods,
+                                                                                                        partition_longetivity,
+                                                                                                        partitioning_type))
         dtNow = datetime.now()
         logger.debug("Latest partition key: {}".format(latest_partition_key))
         logger.debug("Today date is {}".format(dtNow))
@@ -114,6 +117,7 @@ class PartGenerator:
 
             pre_sql = 'alter table {}.{} add partition  '.format(table_owner, table_name)
             # here we should add analysis of key type, if this date OR number as date
+            values_sql = ''
             if partitioning_type == 'range':
                 values_sql = ' values less than ('
             elif partitioning_type == 'list':
@@ -121,9 +125,9 @@ class PartGenerator:
             else:
                 logger.critical(
                     "Not implemented type of partitioning {}. Please implement it.".format(partitioning_type))
-            values_sql = ''
+
             if partition_key_type == 'date':
-                values_sql += "to_date('{}', '{}'))".format(new_partition_date_str, 'MMDDYYYY')
+                values_sql += " to_date('{}', '{}'))".format(new_partition_date_str, 'MMDDYYYY')
             elif partition_key_type == 'date_as_number':
                 values_sql += new_partition_date_str + ')'
 

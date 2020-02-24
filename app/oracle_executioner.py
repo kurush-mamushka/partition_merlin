@@ -11,18 +11,9 @@ class OracleClient:
     cursor = None
     debug_sql = False
 
-    # "db": "test_db",
-    # "db_parameters": {
-    #     "connection_type": "direct",
-    #     "host_name": "localhost",
-    #     "service_name": "XE",
-    #     "port": "1521"
-    # },
-    # or
-    # "db_parameters": {
-    #      "connection_type": "tnsnames",
-    #      "connection_name": "testdb"
     # connection type can be direct or tnsnames
+    # you can use SID or service name in direct connection
+
     def __init__(self, connection_info, **kwargs):
         # 2DO: add check for connection type and change connection style depending on this
         logger.debug(connection_info)
