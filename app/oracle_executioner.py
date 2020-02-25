@@ -24,7 +24,7 @@ class OracleClient:
                                              service_name=connection_info['service_name'])
             elif 'sid' in connection_info:
                 self.dsn = cx_Oracle.makedsn(host=connection_info['host_name'], port=connection_info['port'],
-                                             sid=connection_info['service_name'])
+                                             sid=connection_info['sid'])
             logger.debug("Current DSN: {}".format(self.dsn))
             self.oracleConnection = cx_Oracle.connect(kwargs['username'], kwargs['password'], self.dsn,
                                                       encoding='UTF-8')
@@ -71,7 +71,7 @@ class OracleClient:
                                               res_id[0][4]))
 
         logger.debug("Latest partition key value is: {}".format(res_key))
-        results = [res_key, res_id[0][4]]
+        results = [res_key, res_id[0][4], res_id[0][3]]
         return results
 
     def getPartitionedIndexes(self, table_owner, table_name, partition_position):

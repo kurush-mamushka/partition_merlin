@@ -64,6 +64,7 @@ class PartGenerator:
         table_owner = self.kwargs.get('table_owner')
         table_name = self.kwargs.get('table_name')
         partition_key_type = self.kwargs.get('partition_key_type', 'date')
+        latest_data_tablespace = self.kwargs.get('latest_data_tablespace', None)
         logger.info(
             "Working on table {}.{} for {} periods with period type [{}] and partition type {}.".format(table_owner,
                                                                                                         table_name,
@@ -79,19 +80,21 @@ class PartGenerator:
 
         # 2DO add
         if partition_longetivity == 'day':
-            current_difference = (dtNow - latest_partition_key).days
+            current_difference = (latest_partition_key - dtNow).days
         elif partition_longetivity == 'month':
-            current_difference = self.getDifferenceMonth(dtNow, latest_partition_key)
+            current_difference = self.getDifferenceMonth(latest_partition_key, dtNow)
         else:
             logger.critical("Unknown partition longetivity. Please fix it or add to feature")
 
-        logger.info("Current date is {} and number for pre-existing periods are {}".format(latest_partition_key,
-                                                                                           current_difference))
+        logger.info(
+            "Latest partition date is {} and number for pre-existing periods are {}".format(latest_partition_key,
+                                                                                            current_difference))
 
         if current_difference < 0:
             self.periods = abs(current_difference) + self.periods
         else:
-            self.periods = self.periods + current_difference
+            self.periods = self.periods - current_difference
+
         if self.periods <= 0:
             logger.info("Looks ike we are good with current table {}.{}".format(table_owner, table_name))
         else:
@@ -131,6 +134,9 @@ class PartGenerator:
                 values_sql += " to_date('{}', '{}'))".format(new_partition_date_str.upper(), ora_date_format)
             elif partition_key_type == 'date_as_number':
                 values_sql += new_partition_date_str + ')'
+
+            if latest_data_tablespace is not None:
+                values_sql = values_sql + ' tablespace {}'.format(latest_data_tablespace)
 
             # now let's do indexes
             index_sql = ''

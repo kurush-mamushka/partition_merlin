@@ -41,6 +41,7 @@ for current_table in config.flat_tables_info:
                                             current_table['partition_key_type'])
     current_partition_date_str = all_info[0]
     max_partition_position = all_info[1]
+    latest_data_tablespace = all_info[2]
     all_indexes = oe.getPartitionedIndexes(current_table['table_owner'], current_table['table_name'],
                                            max_partition_position)
     # this is date for highest partition key in python format
@@ -56,6 +57,7 @@ for current_table in config.flat_tables_info:
     parameters = {'latest_partition_date': new_partition_name_dt, 'indexes_list': all_indexes}
     for key, value in current_table.items():
         parameters[key] = value
+    parameters['latest_data_tablespace'] = latest_data_tablespace
     csql = PartGenerator(**parameters)
 
     for single_sql in csql.generateSQLs():
