@@ -71,9 +71,7 @@ class OracleClient:
                                               res_id[0][4]))
 
         logger.debug("Latest partition key value is: {}".format(res_key))
-        results = []
-        results.append(res_key)
-        results.append(res_id[0][4])
+        results = [res_key, res_id[0][4]]
         return results
 
     def getPartitionedIndexes(self, table_owner, table_name, partition_position):
@@ -84,3 +82,12 @@ class OracleClient:
         # res_list = self.run_sql
         logger.info(all_indexes)
         return all_indexes
+
+    def runSQLS(self, sql_list):
+        try:
+            for itemId, sql_item in enumerate(sql_list):
+                logger.debug("Executing {}.".format(sql_item))
+                self.cursor.execute(sql_item)
+        except cx_Oracle.DatabaseError as e:
+            errorObj, = e.args
+            print("Row {} has error {}".format(itemId, errorObj.message))

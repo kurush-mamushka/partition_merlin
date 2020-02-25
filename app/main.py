@@ -8,7 +8,7 @@ import argparse
 
 ###################################################
 logger.info("Partition Merlin")
-oracle_date_format_python = '%d%m%Y'
+oracle_date_format_python = '%m%d%Y'
 new_partition_name_dt = None
 args = None
 
@@ -47,6 +47,7 @@ for current_table in config.flat_tables_info:
     logger.debug(
         "Key value is {} will be formatted with {}.".format(current_partition_date_str, oracle_date_format_python))
     if current_table['partition_key_type'] == 'date':
+        logger.info('XXX')
         new_partition_name_dt = datetime.strptime(current_partition_date_str, oracle_date_format_python)
     elif current_table['partition_key_type'] == 'date_as_number':
         new_partition_name_dt = datetime.strptime(current_partition_date_str,
@@ -60,15 +61,14 @@ for current_table in config.flat_tables_info:
     for single_sql in csql.generateSQLs():
         logger.info(single_sql)
         all_sqls.append(single_sql)
-    logger.success("Done")
+    logger.success("We are done with table {}.{}".format(current_table['table_owner'], current_table['table_name']))
     logger.success("*" * 80)
-    all_sqls.append("/* ************************************************************ */")
 # debug print while still implementing
+
 for single_sql in all_sqls:
     for line in single_sql.split('\n'):
         print('{};'.format(line))
-        if args.run_sql:
-            logger.debug("Running sql: {}".format(single_sql))
-
+if args.run_sql:
+    oe.runSQLS(all_sqls)
 # close oracle connection
 del oe

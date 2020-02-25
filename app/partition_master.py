@@ -17,7 +17,6 @@ class PartGenerator:
         # initial value is start point for generating partitions
         self.periods = 12
         self.kwargs = kwargs
-        print(self.kwargs)
 
     # this method is static so we will be able to call it w/out creating class (as far as this needed now
     @staticmethod
@@ -29,6 +28,7 @@ class PartGenerator:
         p_fmt = ora_fmt.replace('YYYY', '%Y')
         p_fmt = p_fmt.replace('YY', '%y')
         p_fmt = p_fmt.replace('MM', '%m')
+        p_fmt = p_fmt.replace('MON', '%b')
         p_fmt = p_fmt.replace('DD', '%d')
         return p_fmt
 
@@ -73,6 +73,7 @@ class PartGenerator:
         dtNow = datetime.now()
         logger.debug("Latest partition key: {}".format(latest_partition_key))
         logger.debug("Today date is {}".format(dtNow))
+        logger.debug("Periods to add: {}".format(self.periods))
         # get periods if exists or set it as default value in this class
         self.periods = self.kwargs.get('periods', self.periods)
 
@@ -90,7 +91,7 @@ class PartGenerator:
         if current_difference < 0:
             self.periods = abs(current_difference) + self.periods
         else:
-            self.periods = self.periods - current_difference
+            self.periods = self.periods + current_difference
         if self.periods <= 0:
             logger.info("Looks ike we are good with current table {}.{}".format(table_owner, table_name))
         else:
@@ -127,7 +128,7 @@ class PartGenerator:
                     "Not implemented type of partitioning {}. Please implement it.".format(partitioning_type))
 
             if partition_key_type == 'date':
-                values_sql += " to_date('{}', '{}'))".format(new_partition_date_str, 'MMDDYYYY')
+                values_sql += " to_date('{}', '{}'))".format(new_partition_date_str.upper(), ora_date_format)
             elif partition_key_type == 'date_as_number':
                 values_sql += new_partition_date_str + ')'
 
@@ -138,4 +139,4 @@ class PartGenerator:
                                                                                                  index_item[1],
                                                                                                  index_item[2], )
             # ora_date_format _
-            yield pre_sql + new_partition_name + values_sql + index_sql
+            yield pre_sql + new_partition_name.upper() + values_sql + index_sql
