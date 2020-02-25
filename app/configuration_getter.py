@@ -14,7 +14,7 @@ class GetConfig:
             config_file_connection = current_config_connection.read()
             self.db_info = json.loads(config_file_connection)
 
-        logger.info("Config file for DB tables : {}".format(db_connection_config))
+        logger.info("Config file for DB tables : {}".format(db_tables_config))
 
         with open(db_tables_config, 'r') as current_config_tables:
             config_file_tables = current_config_tables.read()

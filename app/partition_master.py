@@ -37,7 +37,12 @@ class PartGenerator:
         return (dt.replace(day=1) + timedelta(days=32)).replace(day=1)
 
     def getDifferenceMonth(self, dtStart, dtEnd):
-        return (dtEnd.year - dtStart.year) * 12 + dtEnd.month - dtStart.month
+        multiplier = 0
+        if dtStart < dtEnd:
+            multiplier = -1
+        else:
+            multiplier = 1
+        return ((dtEnd.year - dtStart.year) * 12 + dtEnd.month - dtStart.month) * multiplier
 
     def addNextPeriod(self, dt, longetivity):
         # add period to current date,
@@ -90,12 +95,12 @@ class PartGenerator:
             "Latest partition date is {} and number for pre-existing periods are {}".format(latest_partition_key,
                                                                                             current_difference))
 
-        if current_difference < 0:
+        if current_difference <= 0:
             self.periods = abs(current_difference) + self.periods
         else:
             self.periods = self.periods - current_difference
 
-        if self.periods <= 0:
+        if self.periods < 0:
             logger.info("Looks ike we are good with current table {}.{}".format(table_owner, table_name))
         else:
             logger.info("Periods to add are: {}".format(self.periods))

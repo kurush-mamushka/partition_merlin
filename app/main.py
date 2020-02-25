@@ -37,6 +37,7 @@ for current_table in config.flat_tables_info:
     ###
     # for testing only
     # let's set initial date
+    logger.debug("Processing {}.{}".format(current_table['table_owner'], current_table['table_name']))
     all_info = oe.getTableLastPartitionInfo(current_table['table_owner'], current_table['table_name'],
                                             current_table['partition_key_type'])
     current_partition_date_str = all_info[0]

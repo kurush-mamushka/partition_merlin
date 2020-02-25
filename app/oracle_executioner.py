@@ -86,8 +86,9 @@ class OracleClient:
     def runSQLS(self, sql_list):
         try:
             for itemId, sql_item in enumerate(sql_list):
-                logger.debug("Executing {}.".format(sql_item))
-                self.cursor.execute(sql_item)
+                for line in sql_item.split('\n'):
+                    logger.debug("Executing {}.".format(sql_item))
+                    self.cursor.execute(line)
         except cx_Oracle.DatabaseError as e:
             errorObj, = e.args
             print("Row {} has error {}".format(itemId, errorObj.message))
