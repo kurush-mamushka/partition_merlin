@@ -4,6 +4,7 @@ drop table test.table_test_dt_month purge;
 drop table test.table_test_dt_num purge;
 drop table test.test_dt_num_month purge;
 drop table test.test_list_partitions purge;
+drop table test.test_partitions_mon purge;
 
 create table test.table_test_dt
 (
@@ -67,4 +68,15 @@ create table test.test_list_partitions
 (
     partition month_201901 values (201902)
 );
+
+create table test.test_partitions_mon
+(
+    start_time date,
+    val        number(2)
+)
+    partition by range (start_time)
+(
+    partition P_14JAN2011 values less than (to_date('20200115', 'YYYYMMDD'))
+);
+
 
