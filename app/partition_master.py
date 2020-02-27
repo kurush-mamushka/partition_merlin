@@ -15,7 +15,7 @@ class PartGenerator:
 
     def __init__(self, **kwargs):
         # initial value is start point for generating partitions
-        self.periods = 12
+        self.periods = 1
         self.kwargs = kwargs
 
     # this method is static so we will be able to call it w/out creating class (as far as this needed now
@@ -36,12 +36,12 @@ class PartGenerator:
         # get 1st day of the next month for monthly partitions
         return (dt.replace(day=1) + timedelta(days=32)).replace(day=1)
 
-    def getDifferenceMonth(self, dtStart, dtEnd):
+    def getDifferenceMonth(self, dtEnd, dtStart):
         multiplier = 0
         if dtStart < dtEnd:
-            multiplier = -1
-        else:
             multiplier = 1
+        else:
+            multiplier = -1
         return ((dtEnd.year - dtStart.year) * 12 + dtEnd.month - dtStart.month) * multiplier
 
     def addNextPeriod(self, dt, longetivity):
@@ -70,23 +70,23 @@ class PartGenerator:
         table_name = self.kwargs.get('table_name')
         partition_key_type = self.kwargs.get('partition_key_type', 'date')
         latest_data_tablespace = self.kwargs.get('latest_data_tablespace', None)
-        logger.info(
-            "Working on table {}.{} for {} periods with period type [{}] and partition type {}.".format(table_owner,
-                                                                                                        table_name,
-                                                                                                        self.periods,
-                                                                                                        partition_longetivity,
-                                                                                                        partitioning_type))
         dtNow = datetime.now()
         logger.debug("Latest partition key: {}".format(latest_partition_key))
         logger.debug("Today date is {}".format(dtNow))
         # get periods if exists or set it as default value in this class
         self.periods = self.kwargs.get('periods', self.periods)
-
+        logger.info(
+            "Working on table {}.{} for [{}] periods with period type [{}] and partition type {}.".format(table_owner,
+                                                                                                          table_name,
+                                                                                                          self.periods,
+                                                                                                          partition_longetivity,
+                                                                                                          partitioning_type))
         # 2DO add
         if partition_longetivity == 'day':
             current_difference = (latest_partition_key - dtNow).days
         elif partition_longetivity == 'month':
             current_difference = self.getDifferenceMonth(latest_partition_key, dtNow)
+
         else:
             logger.critical("Unknown partition longetivity. Please fix it or add to feature")
 
@@ -99,7 +99,7 @@ class PartGenerator:
         else:
             self.periods = self.periods - current_difference
 
-        if self.periods < 0:
+        if self.periods <= 0:
             logger.info("Looks ike we are good with current table {}.{}".format(table_owner, table_name))
         else:
             logger.info("Periods to add are: {}".format(self.periods))
