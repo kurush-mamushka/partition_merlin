@@ -79,7 +79,6 @@ class PartGenerator:
         dtNow = datetime.now()
         logger.debug("Latest partition key: {}".format(latest_partition_key))
         logger.debug("Today date is {}".format(dtNow))
-        logger.debug("Periods to add: {}".format(self.periods))
         # get periods if exists or set it as default value in this class
         self.periods = self.kwargs.get('periods', self.periods)
 

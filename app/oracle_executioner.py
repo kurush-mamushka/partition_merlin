@@ -9,6 +9,7 @@ class OracleClient:
     db = None
     dsn = None
     cursor = None
+    # set to True if you need to log SQLs
     debug_sql = False
 
     # connection type can be direct or tnsnames
@@ -58,7 +59,7 @@ class OracleClient:
 
     def getTableLastPartitionInfo(self, table_owner, table_name, partition_key_type):
 
-        res_id = self.run_sql(sqls4merlin.sqls['get_last_partition_id'].format(table_owner.upper(), table_name.upper()))
+        res_id = self.run_sql(sqls4merlin.sqls['get_last_partition_id'].format(table_owner, table_name))
         # select which code to run in order to get last key value
 
         if partition_key_type == 'date':
@@ -67,7 +68,7 @@ class OracleClient:
             sql_code = 'get_last_partition_key_date_as_number'
 
         res_key = self.run_sql_block_for_key_value(
-            sqls4merlin.sqls[sql_code].format(table_owner.upper(), table_name.upper(),
+            sqls4merlin.sqls[sql_code].format(table_owner, table_name,
                                               res_id[0][4]))
 
         logger.debug("Latest partition key value is: {}".format(res_key))
@@ -77,7 +78,7 @@ class OracleClient:
     def getPartitionedIndexes(self, table_owner, table_name, partition_position):
         index_list = []
         all_indexes = self.run_sql(
-            sqls4merlin.sqls['get_index_name_and_index_tablespace'].format(table_owner.upper(), table_name.upper(),
+            sqls4merlin.sqls['get_index_name_and_index_tablespace'].format(table_owner, table_name,
                                                                            partition_position))
         # res_list = self.run_sql
         logger.info(all_indexes)
@@ -92,3 +93,12 @@ class OracleClient:
         except cx_Oracle.DatabaseError as e:
             errorObj, = e.args
             print("Row {} has error {}".format(itemId, errorObj.message))
+
+    def preCheck(self, table_owner, table_name):
+        logger.debug("Punning pre-checks for table")
+        res = self.run_sql(sqls4merlin.sqls['preCheck'].format(table_owner, table_name))
+        # check if this table exists
+        if res[0][0] == 1:
+            return True
+        else:
+            return False

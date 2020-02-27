@@ -53,3 +53,7 @@ sqls['get_index_name_and_index_tablespace'] = """
     and a.index_owner = b.owner
     and a.partition_position = {}
 """
+
+sqls['preCheck'] = """
+    select count(1) from all_tables where owner = '{}' and table_name = '{}'
+"""

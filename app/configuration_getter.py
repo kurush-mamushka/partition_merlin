@@ -1,5 +1,6 @@
 import json
 from loguru import logger
+import types
 
 
 class GetConfig:
@@ -21,9 +22,13 @@ class GetConfig:
             self.schemas = json.loads(config_file_tables)
 
         logger.debug("Total number of schemas in this setup {}".format(len(self.schemas)))
+        logger.debug("<<<<< HERE >>>>> ")
         for schema in self.schemas:
             logger.debug("Loading schema {}".format(schema))
             all_tables = self.schemas[schema]
             for table in all_tables:
                 table["table_owner"] = schema
+                for key, val in table.items():
+                    if type(val) == str and key in ['table_name', 'table_owner']:
+                        table[key] = val.upper()
                 self.flat_tables_info.append(table)
