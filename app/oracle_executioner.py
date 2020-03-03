@@ -1,7 +1,7 @@
 import cx_Oracle
 from loguru import logger
+
 import sqls4merlin
-from pprint import pprint
 
 
 class OracleClient:
@@ -16,29 +16,47 @@ class OracleClient:
     # you can use SID or service name in direct connection
 
     def __init__(self, connection_info, **kwargs):
-        # 2DO: add check for connection type and change connection style depending on this
-        logger.debug(connection_info)
-        if connection_info["connection_type"] == 'direct':
-            # check if there SID or SERVICE NAME and create DSN accordingly
-            if 'service_name' in connection_info:
-                self.dsn = cx_Oracle.makedsn(host=connection_info['host_name'], port=connection_info['port'],
-                                             service_name=connection_info['service_name'])
-            elif 'sid' in connection_info:
-                self.dsn = cx_Oracle.makedsn(host=connection_info['host_name'], port=connection_info['port'],
-                                             sid=connection_info['sid'])
-            logger.debug("Current DSN: {}".format(self.dsn))
-            self.oracleConnection = cx_Oracle.connect(kwargs['username'], kwargs['password'], self.dsn,
-                                                      encoding='UTF-8')
-        elif connection_info["connection_type"] == 'tnsnames':
-            self.oracleConnection = cx_Oracle.connect(kwargs['username'], kwargs['password'],
-                                                      connection_info['connection_name'], encoding='UTF-8')
-        logger.debug("Connected to oracle")
-        self.cursor = self.oracleConnection.cursor()
-        logger.info("Oracle connection created")
+        try:
+            # 2DO: add check for connection type and change connection style depending on this
+            logger.debug(connection_info)
+            if connection_info["connection_type"] == 'direct':
+                # check if there SID or SERVICE NAME and create DSN accordingly
+                if 'service_name' in connection_info:
+                    self.dsn = cx_Oracle.makedsn(host=connection_info['host_name'], port=connection_info['port'],
+                                                 service_name=connection_info['service_name'])
+                elif 'sid' in connection_info:
+                    self.dsn = cx_Oracle.makedsn(host=connection_info['host_name'], port=connection_info['port'],
+                                                 sid=connection_info['sid'])
+                logger.debug("Current DSN: {}".format(self.dsn))
+                self.oracleConnection = cx_Oracle.connect(kwargs['username'], kwargs['password'], self.dsn,
+                                                          encoding='UTF-8')
+            elif connection_info["connection_type"] == 'tnsnames':
+                self.oracleConnection = cx_Oracle.connect(kwargs['username'], kwargs['password'],
+                                                          connection_info['connection_name'], encoding='UTF-8')
+            logger.debug("Connected to oracle")
+            self.cursor = self.oracleConnection.cursor()
+            logger.info("Oracle connection created")
+        except Exception as e:
+            logger.critical("cx_Oracle error: {}".format(e.args[0]))
+            raise
 
     def __del__(self):
-        logger.info("Oracle connection close")
-        self.oracleConnection.close()
+        logger.info("Closing oracle connection.")
+        try:
+            if self.cursor is not None:
+                self.cursor.close()
+                logger.info("Oracle connection cursor do not exists.")
+            # catch exception if connection is not open
+            if self.oracleConnection is not None:
+                try:
+                    self.oracleConnection.disconnect()
+                except Exception as e:
+                    logger.debug("Looks like connection wasn't even open since we have exception here: {}".format(e))
+                    pass
+                logger.info("Oracle connection has been closed.")
+        except cx_Oracle.DatabaseError:
+            logger.critical('Finally')
+            logger.debug("Oracle connection wasn't even open")
 
     def run_sql(self, sql):
         if self.debug_sql:
@@ -61,7 +79,7 @@ class OracleClient:
 
         res_id = self.run_sql(sqls4merlin.sqls['get_last_partition_id'].format(table_owner, table_name))
         # select which code to run in order to get last key value
-
+        sql_code = None
         if partition_key_type == 'date':
             sql_code = 'get_last_partition_key_date'
         elif partition_key_type == 'date_as_number':
@@ -76,7 +94,6 @@ class OracleClient:
         return results
 
     def getPartitionedIndexes(self, table_owner, table_name, partition_position):
-        index_list = []
         all_indexes = self.run_sql(
             sqls4merlin.sqls['get_index_name_and_index_tablespace'].format(table_owner, table_name,
                                                                            partition_position))
@@ -85,6 +102,7 @@ class OracleClient:
         return all_indexes
 
     def runSQLS(self, sql_list):
+        itemId = None
         try:
             for itemId, sql_item in enumerate(sql_list):
                 for line in sql_item.split('\n'):
@@ -92,9 +110,15 @@ class OracleClient:
                     self.cursor.execute(line)
         except cx_Oracle.DatabaseError as e:
             errorObj, = e.args
-            print("Row {} has error {}".format(itemId, errorObj.message))
+            logger.error("Row {} has error {}".format(itemId, errorObj.message))
 
     def preCheck(self, table_owner, table_name):
+        """
+        :param table_owner: str, table owner (schema)
+        :param table_name: str, table name
+        :return:
+        :rtype: Boolean
+        """
         logger.debug("Punning pre-checks for table")
         res = self.run_sql(sqls4merlin.sqls['preCheck'].format(table_owner, table_name))
         # check if this table exists

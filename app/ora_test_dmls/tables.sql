@@ -14,20 +14,21 @@ create table test.table_test_dt
     tablespace test
     partition by range (dt)
 (
-    partition test_20200101 values less than (to_date(' 2020-01-01 00:00:00', 'syyyy-mm-dd hh24:mi:ss',
+    partition test_20200224 values less than (to_date(' 2020-02-25 00:00:00', 'syyyy-mm-dd hh24:mi:ss',
                                                       'nls_calendar=gregorian'))
         tablespace test
 );
 
-create table test.table_test_dt_month(
+create table test.table_test_dt_month
+(
     dt  date,
     fid number
 )
     tablespace test
     partition by range (dt)
 (
-    partition test_202001 values less than (to_date(' 2020-01-01 00:00:00', 'syyyy-mm-dd hh24:mi:ss',
-                                                    'nls_calendar=gregorian'))
+    partition MONTH_202001 values less than (to_date(' 2020-02-01 00:00:00', 'syyyy-mm-dd hh24:mi:ss',
+                                                     'nls_calendar=gregorian'))
         tablespace test
 );
 
@@ -39,7 +40,7 @@ create table test.table_test_dt_num
     tablespace test
     partition by range (dt)
 (
-    partition p_20200101 values less than (20200101)
+    partition p_20200101 values less than (20200102)
         tablespace test
 );
 
@@ -51,7 +52,7 @@ create table test.test_dt_num_month
     tablespace test
     partition by range (dt)
 (
-    partition p_201912 values less than (202001)
+    partition p_202001 values less than (202002)
         tablespace test
 );
 
@@ -66,7 +67,7 @@ create table test.test_list_partitions
     dt
 )
 (
-    partition month_201901 values (201902)
+    partition month_202001 values (201902)
 );
 
 create table test.test_partitions_mon
@@ -76,7 +77,7 @@ create table test.test_partitions_mon
 )
     partition by range (start_time)
 (
-    partition P_14JAN2011 values less than (to_date('20200115', 'YYYYMMDD'))
+    partition P_14FEB2020 values less than (to_date('20200215', 'YYYYMMDD'))
 );
 
 

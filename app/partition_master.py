@@ -20,11 +20,10 @@ class PartGenerator:
 
     # this method is static so we will be able to call it w/out creating class (as far as this needed now
     @staticmethod
-    def ora2pythonDT(ora_fmt):
+    def ora2pythonDT(ora_fmt: str) -> str:
         # translate oracle date format into Python date format, only YYYY, YY, MM and DD are supported
         logger.debug("ora2pythonDT: {} ".format(ora_fmt))
         # change date format from Oracle to Python one so we can increment it later
-        p_fmt = ''
         p_fmt = ora_fmt.replace('YYYY', '%Y')
         p_fmt = p_fmt.replace('YY', '%y')
         p_fmt = p_fmt.replace('MM', '%m')
@@ -32,21 +31,23 @@ class PartGenerator:
         p_fmt = p_fmt.replace('DD', '%d')
         return p_fmt
 
-    def get1stDayNextMonth(self, dt):
+    @staticmethod
+    def get1stDayNextMonth(dt: datetime) -> datetime:
         # get 1st day of the next month for monthly partitions
         return (dt.replace(day=1) + timedelta(days=32)).replace(day=1)
 
-    def getDifferenceMonth(self, dtEnd, dtStart):
-        multiplier = 0
+    @staticmethod
+    def getDifferenceMonth(dtEnd: datetime, dtStart: datetime) -> int:
         if dtStart < dtEnd:
             multiplier = 1
         else:
             multiplier = -1
         return ((dtEnd.year - dtStart.year) * 12 + dtEnd.month - dtStart.month) * multiplier
 
-    def addNextPeriod(self, dt, longetivity):
+    def addNextPeriod(self, dt: datetime, longetivity: int) -> datetime:
         # add period to current date,
         # supported: day, week, month
+        res = None
         if longetivity == 'day':
             res = dt + timedelta(days=1)
         if longetivity == 'week':
@@ -82,6 +83,7 @@ class PartGenerator:
                                                                                                           partition_longetivity,
                                                                                                           partitioning_type))
         # 2DO add
+        current_difference = None
         if partition_longetivity == 'day':
             current_difference = (latest_partition_key - dtNow).days
         elif partition_longetivity == 'month':

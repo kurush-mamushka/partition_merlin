@@ -2,32 +2,29 @@
 
 Implemented:
 
-* Add partition by range/list (simple one value, no complexity yet), partition key should be:
-    * Date
-    * Date, represented by number (YYYYMM for example for Monthly Partitions, number will be 202001)
-    * Add parameter to config file for number of periods to be added (like 30 (days/months/etc))
-    * List partitioning (simple)
-    * Add username/password via command line
-    * Pass config file via command line
-    * Split DB connection config and Tables config into 2 different files, so tables config can be used for different environments
+* [x] Add partition by range/list (simple one value, no complexity yet), partition key should be:
+    * [x] Date
+    * [x] Date, represented by number (YYYYMM for example for Monthly Partitions, number will be 202001)
+* [x] Add parameter to config file for number of periods to be added (like 30 (days/months/etc))
+* [x] List partitioning (simple)
+* [x] Add username/password via command line
+* [x] Pass config file via command line
+    * [x] Split DB connection config and Tables config into 2 different files, so tables config can be used for different environments
 
 
 **2DO (or is in progress)**
-* ~~Add username/password via command line~~
-* ~~Pass config file via command line~~
-* ~~Split DB connection config and Tables config into 2 different files, so tables config can be used for different environments~~
-* Add parameter to ignore errors (non existing tables), for example table exists in DEV but not exists in PROD
+* [?] Add parameter to ignore errors (non existing tables), for example table exists in DEV but not exists in PROD
 
 **Must**
 
-* ~~Add username/password via command line~~
-* ~~Pass config file via command line / split config files into 2~~
-* ~~Add parameter to config file for number of periods to be added (like 30 (days/months/etc))~~
+* [x] Add username/password via command line
+* [x] Pass config file via command line / split config files into 2
+* [x] Add parameter to config file for number of periods to be added (like 30 (days/months/etc))
 
 **Would**
-* Add safety checks for config file
-* Exception handling and reporting
-* Email notifications
-* Add weekly type of partitions
-* Add partition tablespace rotation schemas (like weekly, daily rotation...)
+* [ ] Add safety checks for config file
+* [ ] Exception handling and reporting
+* [ ] Email notifications
+* [x] Add weekly type of partitions
+* [ ] Add partition tablespace rotation schemas (like weekly, daily rotation...)
 

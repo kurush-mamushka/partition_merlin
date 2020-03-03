@@ -1,6 +1,5 @@
 import json
 from loguru import logger
-import types
 
 
 class GetConfig:
