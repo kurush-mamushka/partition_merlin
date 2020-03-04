@@ -1,4 +1,6 @@
-sqls = {'get_last_partition_id': """
+sqls = {}
+# sql
+sqls['get_last_partition_id'] = """
     with max_part
          as (  select table_owner, table_name, max (partition_position) maxp
                  from dba_tab_partitions
@@ -13,12 +15,14 @@ sqls = {'get_last_partition_id': """
            and dbtp.table_owner = '{}'
            and dbtp.table_name = '{}'
             order by dbtp.table_owner, dbtp.table_name
-        """, 'get_last_partition_key_date': """
+        """
+# this is SQL is for getting last partition key
+sqls['get_last_partition_key_date'] = """
     DECLARE
     long_val long;
     hv varchar2(128);
     dt date;
-    
+
    BEGIN
         select high_value into long_val from dba_tab_partitions where table_owner='{}' and table_name = '{}'
         and partition_position = {};
@@ -26,7 +30,8 @@ sqls = {'get_last_partition_id': """
         execute immediate 'select ' || hv || '  from dual' into dt;
         :o_result := to_char(dt, 'MMDDYYYY');
     END;
-""", 'get_last_partition_key_date_as_number': """
+"""
+sqls['get_last_partition_key_date_as_number'] = """
     DECLARE
     long_val long;
     hv varchar2(128);
@@ -39,14 +44,16 @@ sqls = {'get_last_partition_id': """
         execute immediate 'select ' || hv || '  from dual' into dt;
         :o_result := hv;
         END;
-""", 'get_index_name_and_index_tablespace': """
+"""
+
+sqls['get_index_name_and_index_tablespace'] = """
     select b.owner, a.index_name, a.tablespace_name from dba_ind_partitions a, dba_indexes b where b.table_owner = '{}'
     and b.table_name = '{}'
     and a.index_name = b.index_name
     and a.index_owner = b.owner
     and a.partition_position = {}
-""", 'preCheck': """
+"""
+
+sqls['preCheck'] = """
     select count(1) from all_tables where owner = '{}' and table_name = '{}'
-"""}
-# sql
-# this is SQL is for getting last partition key
+"""
