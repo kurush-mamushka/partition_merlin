@@ -1,11 +1,12 @@
 -- Drop test tables
 drop table test.table_test_dt purge;
-drop table test.table_test_dt_month purge;
 drop table test.table_test_dt_num purge;
+drop table test.table_test_dt_month purge;
 drop table test.test_dt_num_month purge;
 drop table test.test_list_partitions purge;
 drop table test.test_partitions_mon purge;
-
+drop table test.table_test_dt_num purge;
+drop table test.test_partitions_mon_same purge;
 create table test.table_test_dt
 (
     dt  date,
@@ -80,4 +81,16 @@ create table test.test_partitions_mon
     partition P_14FEB2020 values less than (to_date('20200215', 'YYYYMMDD'))
 );
 
-
+create table test.test_partitions_mon_same
+(
+    id number,
+    dt number(10, 0)
+)
+    tablespace test
+    partition by list
+(
+    dt
+)
+(
+    partition p_202001 values (202001)
+);
