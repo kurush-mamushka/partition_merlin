@@ -1,0 +1,41 @@
+{
+  "test": [
+    {
+      "table_name": "table_test_t1",
+      "partition_key_longetivitity": "day",
+      "ora_date_format": "DDMMYYYY",
+      "partition_name_prefix": "alex_test_t1_",
+      "partition_name_suffix": "_name",
+      "partition_key_type": "date",
+      "periods": 12
+    },
+    {
+      "table_name": "table_test_num",
+      "partition_key_longetivitity": "day",
+      "ora_date_format": "YYYYMMDD",
+      "partition_name_prefix": "pre_",
+      "partition_name_suffix": "_post",
+      "partition_key_type": "date_as_number",
+      "periods": 1
+    },
+    {
+      "table_name": "table_test_num_month",
+      "partition_key_longetivitity": "month",
+      "ora_date_format": "YYYYMM",
+      "partition_name_prefix": "pre_",
+      "partition_name_suffix": "_post",
+      "partition_key_type": "date_as_number",
+      "periods": 11
+    },
+    {
+      "table_name": "test_partitions_mon_same",
+      "partition_key_longetivitity": "month",
+      "ora_date_format": "YYYYMM",
+      "partition_name_prefix": "P",
+      "partition_name_suffix": "",
+      "partition_key_type": "date_as_number",
+      "partition_name_same_with_value": "True",
+      "periods": 11
+    }
+  ]
+}
