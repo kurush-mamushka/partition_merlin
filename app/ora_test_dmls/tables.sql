@@ -7,6 +7,8 @@ drop table test.test_list_partitions purge;
 drop table test.test_partitions_mon purge;
 drop table test.table_test_dt_num purge;
 drop table test.test_partitions_mon_same purge;
+-- Creating tables
+
 create table test.table_test_dt
 (
     dt  date,

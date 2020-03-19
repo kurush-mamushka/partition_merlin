@@ -25,6 +25,7 @@
       "partition_name_prefix": "pre_",
       "partition_name_suffix": "_post",
       "partition_key_type": "date_as_number",
+      "partition_name_same_with_value": "True",
       "periods": 11
     },
     {
@@ -34,7 +35,6 @@
       "partition_name_prefix": "P",
       "partition_name_suffix": "",
       "partition_key_type": "date_as_number",
-      "partition_name_same_with_value": "True",
       "periods": 11
     }
   ]

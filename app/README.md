@@ -20,6 +20,8 @@ Implemented:
 * [x] Add username/password via command line
 * [x] Pass config file via command line / split config files into 2
 * [x] Add parameter to config file for number of periods to be added (like 30 (days/months/etc))
+* [x] Add parameter to name partition in same format as date (so for date like 02/15/2020 rerpesented as number 20200215 partition name will be equal to date)
+* [ ] Add partition list mode with 2/3 values, like 2019,01 for 2019 YYYY and 01 for MM
 
 **Would**
 * [ ] Add safety checks for config file

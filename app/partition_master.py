@@ -74,6 +74,7 @@ class PartGenerator:
         dtNow = datetime.now()
         logger.debug("Latest partition key: {}".format(latest_partition_key))
         logger.debug("Today date is {}".format(dtNow))
+        partition_name_same_with_value = self.kwargs.get('partition_name_same_with_value', 'False') == 'True'
         # get periods if exists or set it as default value in this class
         self.periods = self.kwargs.get('periods', self.periods)
         logger.info(
@@ -88,7 +89,6 @@ class PartGenerator:
             current_difference = (latest_partition_key - dtNow).days
         elif partition_longetivity == 'month':
             current_difference = self.getDifferenceMonth(latest_partition_key, dtNow)
-
         else:
             logger.critical("Unknown partition longetivity. Please fix it or add to feature")
 
@@ -115,14 +115,18 @@ class PartGenerator:
             # we should have 2 variables:
             # partition name in format that we have in setup
             # and real date for partition bound values
-            if n > 0:
-                # if this is not 1st iteration - add one period to partition name
-                new_partition_name_dt = self.addNextPeriod(new_partition_name_dt, partition_longetivity)
-                new_partition_name_str = datetime.strftime(new_partition_name_dt, py_dt_format)
-
             new_partition_date_dt = self.addNextPeriod(new_partition_date_dt, partition_longetivity)
             new_partition_date_str = datetime.strftime(new_partition_date_dt, py_dt_format)
+            if n > 0:
+                # if this is not 1st iteration - add one period to partition name
+                if not partition_name_same_with_value:
+                    new_partition_name_dt = self.addNextPeriod(new_partition_name_dt, partition_longetivity)
+                else:
+                    new_partition_name_dt = new_partition_date_dt
+                new_partition_name_str = datetime.strftime(new_partition_name_dt, py_dt_format)
 
+            # here we need to work with new parameter
+            # partition_name_same_with_value
             new_partition_name = prefix + new_partition_name_str + suffix
 
             pre_sql = 'alter table {}.{} add partition  '.format(table_owner, table_name)
