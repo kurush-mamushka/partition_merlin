@@ -45,7 +45,7 @@ This is second approach, I would use stupidly simple and idiot prood setup for d
 * [x] Add weekly type of partitions
 * [ ] Add partition tablespace rotation schemas (like weekly, daily rotation...)
 
-## Config helper
+## Config/Run helper
 
 ### Setup(config) Files
 
@@ -83,3 +83,50 @@ Using **tnsnames**:
 ```
 
 **Tables config:**
+
+Example:
+
+So schema name is **test**, and under each schema you can have set of your tables.
+
+
+```json
+{
+  "test": [
+      {
+      "table_name": "test_partitions_mon_same",
+      "partition_key_longetivitity": "month",
+      "ora_date_format": "YYYYMM",
+      "partition_name_prefix": "P_",
+      "partition_name_suffix": "_MON",
+      "partition_key_type": "date_as_number",
+      "partition_name_same_with_value": "True",
+      "partitioning_type": "list",
+      "periods": 11
+    },
+    {
+      "table_name": "test_partitions_mon_same",
+      "partition_key_longetivitity": "month",
+      "ora_date_format": "YYYYMM",
+      "partition_name_prefix": "P",
+      "partition_name_suffix": "",
+      "partition_key_type": "date_as_number",
+      "periods": 11
+    }
+  ]
+}
+
+```
+
+
+
+Parameter | Optional | Allowed values | Meaning 
+----------|:--------:|:--------------:|--------|
+table_name| No| *| Table name itself 
+partition\_key\_longetivitity | No | [day, week, month] | What is period measurment for partition slice|
+ora\_date\_format | No | Any Oracle Format String | This is describe how to represent date in partition name, so if you have partition name as MyPerfect\_**20201231**_Partition and this parameter will be **YYYYMMDD**
+partition\_name_prefix | No | Any | Prefix for partition name, can be empty |
+partition\_name_suffix | No | Any | Suffix for partition name, can be empty 
+partition\_key_type | No | [date, date\_as_number]| Partition key type 
+partitioning\_type | Yes | [range, list] | Type of partitioning, default is range
+partition\_name_same_with_value | Yes | [True, False] | If partition name is same with date in partition key
+periods | Yes | Number | Number of periods to add to target table, default 12
