@@ -1,0 +1,14 @@
+{
+  "test": [
+      {
+      "table_name": "test_partitions_mon_same",
+      "partition_key_longetivitity": "month",
+      "ora_date_format": "YYYYMM",
+      "partition_name_prefix": "P",
+      "partition_name_suffix": "",
+      "partition_key_type": "date_as_number",
+      "6": "True",
+      "periods": 11
+    }
+  ]
+}
