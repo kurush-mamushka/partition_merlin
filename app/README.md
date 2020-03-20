@@ -47,7 +47,7 @@ This is second approach, I would use stupidly simple and idiot prood setup for d
 
 ## Config helper
 
-###Setup(config) Files
+### Setup(config) Files
 
 **DB Connection info:**
 
