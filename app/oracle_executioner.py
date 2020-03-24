@@ -33,6 +33,9 @@ class OracleClient:
             elif connection_info["connection_type"] == 'tnsnames':
                 self.oracleConnection = cx_Oracle.connect(kwargs['username'], kwargs['password'],
                                                           connection_info['connection_name'], encoding='UTF-8')
+            else:
+                logger.critical("Not specified or wrong connection mode (you can use direct/tnsnames")
+
             logger.debug("Connected to oracle")
             self.cursor = self.oracleConnection.cursor()
             logger.info("Oracle connection created")

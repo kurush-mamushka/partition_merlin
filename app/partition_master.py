@@ -117,13 +117,12 @@ class PartGenerator:
             # and real date for partition bound values
             new_partition_date_dt = self.addNextPeriod(new_partition_date_dt, partition_longetivity)
             new_partition_date_str = datetime.strftime(new_partition_date_dt, py_dt_format)
-            if n > 0:
+            if partition_name_same_with_value:
+                new_partition_name_dt = new_partition_date_dt
+            if n > 0 and not partition_name_same_with_value:
                 # if this is not 1st iteration - add one period to partition name
-                if not partition_name_same_with_value:
-                    new_partition_name_dt = self.addNextPeriod(new_partition_name_dt, partition_longetivity)
-                else:
-                    new_partition_name_dt = new_partition_date_dt
-                new_partition_name_str = datetime.strftime(new_partition_name_dt, py_dt_format)
+                new_partition_name_dt = self.addNextPeriod(new_partition_name_dt, partition_longetivity)
+            new_partition_name_str = datetime.strftime(new_partition_name_dt, py_dt_format)
 
             # here we need to work with new parameter
             # partition_name_same_with_value
