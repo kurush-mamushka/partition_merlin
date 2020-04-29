@@ -4,12 +4,14 @@ This is main module to run partition maintenance.
 
 """
 ###################################################
+import sys
+import argparse
+from datetime import datetime
+from loguru import logger
+
 from partition_master import PartGenerator
 from configuration_getter import GetConfig
-from loguru import logger
 from oracle_executioner import OracleClient
-from datetime import datetime
-import argparse
 
 ###################################################
 __author__ = "Alex Pokushalov"
@@ -105,4 +107,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

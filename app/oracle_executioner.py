@@ -109,7 +109,7 @@ class OracleClient:
         try:
             for itemId, sql_item in enumerate(sql_list):
                 for line in sql_item.split('\n'):
-                    logger.debug("Executing {}.".format(sql_item))
+                    logger.debug("Executing {}.".format(line))
                     self.cursor.execute(line)
         except cx_Oracle.DatabaseError as e:
             errorObj, = e.args

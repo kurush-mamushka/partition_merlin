@@ -21,7 +21,6 @@ class GetConfig:
             self.schemas = json.loads(config_file_tables)
 
         logger.debug("Total number of schemas in this setup {}".format(len(self.schemas)))
-        logger.debug("<<<<< HERE >>>>> ")
         for schema in self.schemas:
             logger.debug("Loading schema {}".format(schema))
             all_tables = self.schemas[schema]

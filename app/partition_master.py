@@ -24,12 +24,10 @@ class PartGenerator:
         # translate oracle date format into Python date format, only YYYY, YY, MM and DD are supported
         logger.debug("ora2pythonDT: {} ".format(ora_fmt))
         # change date format from Oracle to Python one so we can increment it later
-        p_fmt = ora_fmt.replace('YYYY', '%Y')
-        p_fmt = p_fmt.replace('YY', '%y')
-        p_fmt = p_fmt.replace('MM', '%m')
-        p_fmt = p_fmt.replace('MON', '%b')
-        p_fmt = p_fmt.replace('DD', '%d')
-        return p_fmt
+        ora2python_translation = (('YYYY', '%Y'), ('YY', '%y'), ('MM', '%m'), ('MON', '%b'), ('DD', '%d'))
+        for fOra, fPython in ora2python_translation:
+            ora_fmt = ora_fmt.replace(fOra, fPython)
+        return ora_fmt
 
     @staticmethod
     def get1stDayNextMonth(dt: datetime) -> datetime:
@@ -42,7 +40,7 @@ class PartGenerator:
             multiplier = 1
         else:
             multiplier = -1
-        return ((dtEnd.year - dtStart.year) * 12 + dtEnd.month - dtStart.month) * multiplier
+        return abs((dtEnd.year - dtStart.year) * 12 + dtEnd.month - dtStart.month) * multiplier
 
     def addNextPeriod(self, dt: datetime, longetivity: int) -> datetime:
         # add period to current date,
@@ -102,7 +100,7 @@ class PartGenerator:
             self.periods = self.periods - current_difference
 
         if self.periods <= 0:
-            logger.info("Looks ike we are good with current table {}.{}".format(table_owner, table_name))
+            logger.info("Looks like we are good with current table {}.{}".format(table_owner, table_name))
         else:
             logger.info("Periods to add are: {}".format(self.periods))
 
@@ -128,7 +126,7 @@ class PartGenerator:
             # partition_name_same_with_value
             new_partition_name = prefix + new_partition_name_str + suffix
 
-            pre_sql = 'alter table {}.{} add partition  '.format(table_owner, table_name)
+            pre_sql = 'alter table {}.{} add partition '.format(table_owner, table_name)
             # here we should add analysis of key type, if this date OR number as date
             values_sql = ''
             if partitioning_type == 'range':
