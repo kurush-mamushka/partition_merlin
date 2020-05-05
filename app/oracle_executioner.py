@@ -105,12 +105,21 @@ class OracleClient:
         return all_indexes
 
     def runSQLS(self, sql_list):
+        ignorable_errors = [22864]
         itemId = None
         try:
             for itemId, sql_item in enumerate(sql_list):
                 for line in sql_item.split('\n'):
                     logger.debug("Executing {}.".format(line))
-                    self.cursor.execute(line)
+                    try:
+                        self.cursor.execute(line)
+                    except cx_Oracle.DatabaseError as e:
+                        errorObj, = e.args
+                        if errorObj.code in ignorable_errors:
+                            logger.warning(f"Gor ORA-{errorObj.code} error which is in list of ignorable errors, continue")
+                            pass
+                        else:
+                            raise e
         except cx_Oracle.DatabaseError as e:
             errorObj, = e.args
             logger.error("Row {} has error {}".format(itemId, errorObj.message))

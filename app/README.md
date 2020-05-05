@@ -130,3 +130,4 @@ partition\_key_type | No | [date, date\_as_number]| Partition key type
 partitioning\_type | Yes | [range, list] | Type of partitioning, default is range
 partition\_name_same_with_value | Yes | [True, False] | If partition name is same with date in partition key
 periods | Yes | Number | Number of periods to add to target table, default 12
+partition\_name\_minus\_1 | Yes | [True,False] | If True, just name new partition as (partition_date) - 1 |

@@ -96,3 +96,14 @@ create table test.test_partitions_mon_same
 (
     partition p_202001 values (202001)
 );
+
+create table test_week
+(
+    dt date,
+    id number
+)
+    partition by range (dt)
+(
+    partition week_20200105 values less than (to_date('20200106', 'YYYYMMDD')),
+    partition week_20200112 values less than (to_date('20200113', 'YYYYMMDD'))
+);

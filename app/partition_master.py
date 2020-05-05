@@ -73,6 +73,7 @@ class PartGenerator:
         logger.debug("Latest partition key: {}".format(latest_partition_key))
         logger.debug("Today date is {}".format(dtNow))
         partition_name_same_with_value = self.kwargs.get('partition_name_same_with_value', 'False') == 'True'
+        partition_name_minus_1 = self.kwargs.get('partition_name_minus_1', 'False') == 'True'
         # get periods if exists or set it as default value in this class
         self.periods = self.kwargs.get('periods', self.periods)
         logger.info(
@@ -81,12 +82,13 @@ class PartGenerator:
                                                                                                           self.periods,
                                                                                                           partition_longetivity,
                                                                                                           partitioning_type))
-        # 2DO add
         current_difference = None
         if partition_longetivity == 'day':
             current_difference = (latest_partition_key - dtNow).days
         elif partition_longetivity == 'month':
             current_difference = self.getDifferenceMonth(latest_partition_key, dtNow)
+        elif partition_longetivity == 'week':
+            current_difference = int((latest_partition_key - dtNow).days / 7)
         else:
             logger.critical("Unknown partition longetivity. Please fix it or add to feature")
 
@@ -105,6 +107,7 @@ class PartGenerator:
             logger.info("Periods to add are: {}".format(self.periods))
 
         # replace this with function returning partition name and partition date (+1)
+
         new_partition_name_dt = latest_partition_key
         new_partition_name_str = datetime.strftime(new_partition_name_dt, py_dt_format)
         new_partition_date_dt = latest_partition_key
@@ -115,11 +118,17 @@ class PartGenerator:
             # and real date for partition bound values
             new_partition_date_dt = self.addNextPeriod(new_partition_date_dt, partition_longetivity)
             new_partition_date_str = datetime.strftime(new_partition_date_dt, py_dt_format)
+
             if partition_name_same_with_value:
                 new_partition_name_dt = new_partition_date_dt
-            if n > 0 and not partition_name_same_with_value:
+
+            if n > 0 and not partition_name_same_with_value and not partition_name_minus_1:
                 # if this is not 1st iteration - add one period to partition name
                 new_partition_name_dt = self.addNextPeriod(new_partition_name_dt, partition_longetivity)
+
+            if partition_name_minus_1:
+                new_partition_name_dt = new_partition_date_dt + timedelta(days=-1)
+
             new_partition_name_str = datetime.strftime(new_partition_name_dt, py_dt_format)
 
             # here we need to work with new parameter
