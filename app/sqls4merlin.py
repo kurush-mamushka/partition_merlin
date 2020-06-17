@@ -59,8 +59,8 @@ sqls['preCheck'] = """
 """
 
 sqls['checkGlobalIndexes'] = """
-select count(1) from dba_tables t where t.partitioned = 'YES' 
-and exists (select 1 from dba_indexes i where i.table_name = t.table_name and i.owner = t.owner
-and i.partitioned = 'NO')
-and t.owner = '{}' and t.table_name = '{}'
+    select count(1) from dba_tables t where t.partitioned = 'YES' 
+    and exists (select 1 from dba_indexes i where i.table_name = t.table_name and i.owner = t.owner
+    and i.partitioned = 'NO')
+    and t.owner = '{}' and t.table_name = '{}'
 """
