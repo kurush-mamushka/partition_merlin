@@ -153,7 +153,11 @@ class PartGenerator:
 
             if latest_data_tablespace is not None:
                 values_sql = values_sql + ' tablespace {}'.format(latest_data_tablespace)
-
+            # TODO
+            # add STORAGE clause to minimize usage of space by sempty partitions
+            # values_sql = values_sql + ' storage {}'.format(   >>>> STORAGE_CLAUSE)
+            # as temp solution we will hardcode this for now
+            values_sql = values_sql + ' storage (initial 1024 next 10240) '
             # now let's do indexes
             index_sql = ''
             for index_item in self.kwargs['indexes_list']:

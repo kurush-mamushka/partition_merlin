@@ -39,6 +39,10 @@ class OracleClient:
             logger.debug("Connected to oracle")
             self.cursor = self.oracleConnection.cursor()
             logger.info("Oracle connection created")
+            self.kwargs = kwargs
+            self.debug_sql = self.kwargs.get('debugSQL')
+            logger.info(f"DebugSQL is [{self.debug_sql}] for this Oracle session")
+
         except Exception as e:
             logger.critical("cx_Oracle error: {}".format(e.args[0]))
             raise
@@ -54,7 +58,7 @@ class OracleClient:
                 try:
                     self.oracleConnection.disconnect()
                 except Exception as e:
-                    logger.debug("Looks like connection wasn't even open since we have exception here: {}".format(e))
+                    # logger.debug("Looks like connection wasn't even open since we have exception here: {}".format(e))
                     pass
                 logger.info("Oracle connection has been closed.")
         except cx_Oracle.DatabaseError:
@@ -138,3 +142,8 @@ class OracleClient:
             return True
         else:
             return False
+
+    def checkGlobalIndexes(self, table_owner, table_name):
+        logger.debug("Running precheck for global indexes")
+        res = self.run_sql(sqls4merlin.sqls['checkGlobalIndexes'].format(table_owner, table_name))
+        return res[0][0] != 0
